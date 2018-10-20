@@ -1,34 +1,55 @@
 const webpack = require('webpack');
 const path = require('path');
-const nodeExternals = require('webpack-node-externals');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+// const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ProgressBarPlugin = require('progress-bar-webpack-plugin');
+
+console.log(path.resolve(__dirname, './src/components/index.tsx'));
 
 module.exports = {
-  entry: ['webpack/hot/poll?1000', './src/main.hmr.ts'],
+  devtool: 'source-map',
   watch: true,
-  target: 'node',
-  externals: [
-    nodeExternals({
-      whitelist: ['webpack/hot/poll?1000'],
-    }),
-  ],
+  target: 'web',
+  mode: 'development',
+  entry: {
+    app: path.resolve(__dirname, 'components/index.tsx')
+  },
+  output: {
+    filename: '[name].js',
+    path: path.resolve(__dirname, 'dist')
+  },
+  watchOptions: {
+    aggregateTimeout: 300,
+    poll: 1000
+  },
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
-        use: 'ts-loader',
-        exclude: /node_modules/,
+        test: /\.scss$/,
+        use: ExtractTextPlugin.extract({
+          use: 'css-loader!sass-loader',
+          fallback: 'style-loader'
+        })
       },
-    ],
+      {
+        test: /\.tsx$/,
+        use: ['babel-loader', 'ts-loader'],
+        exclude: /node_modules|src/,
+      }
+    ]
   },
-  mode: "development",
+  plugins: [ 
+    new ExtractTextPlugin({
+      filename: 'index.css'
+    }),
+    // new webpack.ProgressPlugin()
+    new ProgressBarPlugin()
+  ],
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
   },
-  plugins: [
-    new webpack.HotModuleReplacementPlugin(),
-  ],
-  output: {
-    path: path.join(__dirname, 'dist'),
-    filename: 'server.js',
-  },
+  externals: {
+    "react": "React",
+    "react-dom": "ReactDOM"
+  }
 };

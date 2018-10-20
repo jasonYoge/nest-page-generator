@@ -8,10 +8,12 @@
     "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
-    "target": "es6",
+    "target": "es5",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./src"
+    "baseUrl": "./src",
+    "jsx": "preserve",
+    "lib": [ "es2015", "dom" ]
   },
   "include": [
     "src/**/*"
